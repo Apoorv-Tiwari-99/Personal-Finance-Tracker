@@ -28,6 +28,7 @@ export default function SmartSuggestions() {
       
       // Try to get suggestions from our backend API
       const response = await api.get('/suggestions');
+      console.log("Suggestion are :",response);
       
       if (response.data.success && response.data.data) {
         setSuggestions(response.data.data.suggestions || []);

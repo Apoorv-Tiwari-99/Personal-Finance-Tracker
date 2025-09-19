@@ -2,30 +2,63 @@ const axios = require('axios');
 
 class PythonService {
   constructor() {
-    this.baseURL = process.env.PYTHON_SERVICE_URL || 'http://localhost:5001';
-    // Get the API key from an environment variable
+    this.baseURL = process.env.PYTHON_SERVICE_URL || 'https://python-service-fxlm.onrender.com';
     this.apiKey = process.env.PYTHON_SERVICE_API_KEY;
   }
 
   async getSuggestions(userId) {
     try {
-      const response = await axios.get(`${this.baseURL}/analyze/${userId}`, {
-        headers: {
-          // Add the API key to the request header
-          'X-API-Key': this.apiKey,
-        },
-      });
-      return response.data;
+      console.log(`Calling Python service: ${this.baseURL}/analyze/${userId}`);
+      
+      const config = {
+        headers: {}
+      };
+      
+      // Add API key if it exists
+      if (this.apiKey) {
+        config.headers['X-API-Key'] = this.apiKey;
+      }
+      
+      const response = await axios.get(`${this.baseURL}/analyze/${userId}`, config);
+      console.log('Python service response:', response.data);
+      
+      // Ensure the response has the expected structure
+      if (response.data && response.data.suggestions) {
+        return {
+          success: true,
+          data: {
+            suggestions: response.data.suggestions
+          }
+        };
+      } else {
+        // If Python service returns data but not in expected format
+        return {
+          success: false,
+          message: 'Python service returned unexpected data format'
+        };
+      }
+      
     } catch (error) {
       console.error('Error fetching suggestions from Python service:', error.message);
-      // It's useful to log the full error for debugging
+      
       if (error.response) {
         console.error('Python service response error:', error.response.status, error.response.data);
+        return {
+          success: false,
+          message: `Python service error: ${error.response.status} - ${error.response.data?.message || 'Unknown error'}`
+        };
+      } else if (error.request) {
+        console.error('No response received from Python service');
+        return {
+          success: false,
+          message: 'Python service is not responding. Please check if the service is running.'
+        };
+      } else {
+        return {
+          success: false,
+          message: `Error setting up request: ${error.message}`
+        };
       }
-      return {
-        success: false,
-        message: 'Unable to fetch suggestions at this time'
-      };
     }
   }
 
