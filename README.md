@@ -38,7 +38,6 @@ Built with **Next.js, Node.js/Express, MongoDB and Flask (Python)**.
 ## ⚙️ Installation & Setup
 
 ### 1. Clone the Repo
-    ```bash
    git clone repo_url
    cd Personal-Finance-Tracker
    
