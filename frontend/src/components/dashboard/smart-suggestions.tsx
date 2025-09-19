@@ -26,21 +26,24 @@ export default function SmartSuggestions() {
       setLoading(true);
       setError('');
       
-      // Try to get suggestions from our backend API
       const response = await api.get('/suggestions');
-      console.log("Suggestion are :",response);
+      console.log("Suggestions response:", response);
       
       if (response.data.success && response.data.data) {
+        // Success case - Python service is working
         setSuggestions(response.data.data.suggestions || []);
+      } else if (response.data.success === false) {
+        // Python service error case
+        setError(response.data.message || 'Unable to fetch suggestions');
+        setSuggestions(getMockSuggestions());
       } else {
-        // Fallback to mock suggestions if API response is unexpected
+        // Unexpected format
         setSuggestions(getMockSuggestions());
         setError('Using demo suggestions (API returned unexpected format)');
       }
     } catch (error: any) {
       console.error('Error fetching suggestions:', error);
       
-      // More specific error handling
       if (error.code === 'NETWORK_ERROR' || error.message.includes('Failed to fetch')) {
         setError('Cannot connect to suggestion service. Please check if the Python service is running.');
       } else if (error.response?.status === 502) {
@@ -49,7 +52,6 @@ export default function SmartSuggestions() {
         setError('Unable to load suggestions at this time');
       }
       
-      // Fallback to mock suggestions
       setSuggestions(getMockSuggestions());
     } finally {
       setLoading(false);
