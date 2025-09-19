@@ -1,8 +1,18 @@
 const express = require('express');
 const pythonService = require('../services/pythonService');
 const { protect } = require('../middleware/auth');
+const { apiKeyAuth } = require('../middleware/apiKeyAuth'); 
 
 const router = express.Router();
+
+// Allow both authenticated users AND internal services with API key
+router.get('/', (req, res, next) => {
+  if (req.headers['x-api-key']) {
+    return apiKeyAuth(req, res, next);
+  } else {
+    return protect(req, res, next);
+  }
+}, getExpenses);
 
 router.use(protect);
 
