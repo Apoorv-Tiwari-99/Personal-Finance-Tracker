@@ -2,6 +2,7 @@ const express = require('express');
 const pythonService = require('../services/pythonService');
 const { protect } = require('../middleware/auth');
 const { apiKeyAuth } = require('../middleware/apiKeyAuth'); 
+const { getExpenses } = require('../controllers/expenseController');
 
 const router = express.Router();
 
