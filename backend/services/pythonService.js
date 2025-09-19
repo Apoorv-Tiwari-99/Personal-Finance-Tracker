@@ -1,5 +1,4 @@
 const axios = require('axios');
-
 class PythonService {
   constructor() {
     this.baseURL = process.env.PYTHON_SERVICE_URL || 'http://localhost:5001';
@@ -45,4 +44,4 @@ class PythonService {
   }
 }
 
-module.exports = new PythonService();
+module.exports = new PythonService(); 
